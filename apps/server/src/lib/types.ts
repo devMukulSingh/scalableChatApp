@@ -1,5 +1,5 @@
 export interface ISocketMessage {
-    msg: string,
+    message: string,
     senderId: string,
     receiverId: string
 }

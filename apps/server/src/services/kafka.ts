@@ -73,7 +73,7 @@ export async function startMessageConsumer() {
 
                     await prisma.message.create({
                         data:{
-                            message: messageFromKafkaProducer.msg,
+                            message: messageFromKafkaProducer.message,
                             receiverId:messageFromKafkaProducer.receiverId,
                             senderId:messageFromKafkaProducer.senderId
                         }
