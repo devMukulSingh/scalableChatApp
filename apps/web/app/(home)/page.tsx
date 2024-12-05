@@ -1,14 +1,7 @@
-import ChatSection from "./components/ChatSection/ChatSection";
-import ContactsSidebar from "./components/ContactSection/ContactsSidebar";
+import EmplyChat from "./components/ContactSection/EmplyChat";
 
 const page = () => {
-
-  return (
-    <div className="grid grid-cols-3 h-full w-screen">
-      <ContactsSidebar/>
-      <ChatSection/>
-    </div>
-  );
+  return <EmplyChat />;
 };
 
 export default page;

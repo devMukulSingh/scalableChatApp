@@ -4,6 +4,8 @@ import "./globals.css";
 import SocketProvider from "../context/SocketProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "./lib/QueryProvider";
+import { ReactNode } from "react";
+import { Toaster } from "react-hot-toast"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -30,9 +32,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable}`}
         suppressHydrationWarning
       >
+        <Toaster/>
         <ClerkProvider>
           <QueryProvider>
-            <SocketProvider>{children}</SocketProvider>
+            <SocketProvider>
+              {children}
+              </SocketProvider>
           </QueryProvider>
         </ClerkProvider>
       </body>

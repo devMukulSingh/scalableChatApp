@@ -1,7 +1,7 @@
 import React from "react";
 
 type Props = {
-  name: string;
+  name: string | undefined;
   onClick : ( ) => void
 };
 
@@ -20,7 +20,7 @@ const Avatar = ({ name, onClick }: Props) => {
             justify-center
             `}
     >
-      {name}
+      {name.toUpperCase()}
     </div>
   );
 };
