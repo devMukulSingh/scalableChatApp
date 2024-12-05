@@ -8,6 +8,8 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { ISocketMessage } from "../app/lib/types";
+import { auth } from "@clerk/nextjs/server";
+import { useAuth } from "@clerk/nextjs";
 
 interface IContext {
   sendMessage: ({ msg, senderId, receiverId }: ISocketMessage) => void;
@@ -41,16 +43,19 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     console.log(parsedMsg, "message");
     setMessages((prev) => [...prev, parsedMsg]);
   }, []);
-
+  const { userId } = useAuth()
   useEffect(() => {
-    const _socket = io(`http://localhost:8000`);
-    _socket.on("event:message", onMessageReceived);
-    setSocket(_socket);
-    return () => {
-      _socket.off("event:message", onMessageReceived);
-      _socket.disconnect();
-      setSocket(undefined);
-    };
+    if (userId){
+
+      const _socket = io(`http://localhost:8000`);
+      _socket.on("event:message", onMessageReceived);
+      setSocket(_socket);
+      return () => {
+        _socket.off("event:message", onMessageReceived);
+        _socket.disconnect();
+        setSocket(undefined);
+      };
+    }
   },[]);
 
   return (

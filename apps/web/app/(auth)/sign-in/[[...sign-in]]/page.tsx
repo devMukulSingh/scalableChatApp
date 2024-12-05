@@ -1,12 +1,10 @@
-import { SignIn } from '@clerk/nextjs'
-import React from 'react'
+import { SignIn } from "@clerk/nextjs"
 
-type Props = {}
 
-const SigninPage = (props: Props) => {
+const page = () => {
   return (
-    <SignIn />
+   <SignIn/>
   )
 }
 
-export default SigninPage
+export default page

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import SocketProvider from "../context/SocketProvider";
 import { ClerkProvider } from "@clerk/nextjs";
+import QueryProvider from "./lib/QueryProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,12 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-          <SocketProvider>{children}</SocketProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        suppressHydrationWarning
+      >
+        <ClerkProvider>
+          <QueryProvider>
+            <SocketProvider>{children}</SocketProvider>
+          </QueryProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
