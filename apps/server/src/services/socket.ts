@@ -8,15 +8,15 @@ const pub = new Redis(process.env.REDISS_URL!)
 const sub = new Redis(process.env.REDISS_URL!)
 
 class SocketService {
-  
-    public onlineUsers : Map<string,string> | null;
+
+    public onlineUsers: Map<string, string> | null;
     private _io: Server;
     constructor() {
         console.log("Init Socket Service...");
         this.onlineUsers = new Map();
         this._io = new Server({
             cors: {
-                allowedHeaders: "*", 
+                allowedHeaders: "*",
                 origin: `${BASE_URL_CLIENT}`,
                 methods: ["GET", "POST"],
             }
@@ -30,38 +30,42 @@ class SocketService {
         console.log("Init Socket Listeners...");
         //when socket's send message event is fired, we are publshing message to redis PUBLISHER
         io.on('connection', (socket) => {
-            console.log("Socket connected", );
+            console.log("Socket connected",);
             const userId = socket.handshake.query.userId?.toString();
-            if(!userId){
-                return console.log(`User id is required`);
+            if (!userId) {
+                throw new Error('User id is undefined')
             }
-            this.onlineUsers?.set(userId,socket.id)
+            this.onlineUsers?.set(userId, socket.id)
 
-            socket.on("event:message", async ({ message,receiverId,senderId}: ISocketMessage) => {
+            socket.on("event:message", async ({ message, receiverId, senderId }: ISocketMessage) => {
                 console.log("new message, publishing to Rediss PUBLISHER...", message, receiverId, senderId);
-                await pub.publish("MESSAGES", JSON.stringify({  
+                await pub.publish("MESSAGES", JSON.stringify({
                     message: message, senderId: senderId, receiverId: receiverId
                 }));
             })
-        } 
+        }
         )
         io.on('connect_error', (err) => {
-            console.log(err,"Error connection")
+            console.log(err, "Error connection")
         })
         //then the message is received at the rediss SUBSCRIBER on 'MESSAGES' CHANNEL, so that we can emit the message to
         //  particular receiver
         sub.on('message', async (channel, message) => {
             if (channel === 'MESSAGES') {
-                console.log(`new message received on Rediss Subscriber, emitting to all connected clients...`, message);
-          
+                console.log(`new message received on Rediss Subscriber`, message);
+
                 const messageObj = JSON.parse(message) as ISocketMessage;
                 const receiverSocket = this.onlineUsers?.get(messageObj.receiverId)?.toString();
-                if(!receiverSocket){
-                   return console.log(`Receiver socket is undefined`)
+
+                if (receiverSocket) {
+                    //sending the message to particular receiver
+                    console.log(`Sending message to receiver ${receiverSocket}...`)
+                    io.to(receiverSocket).emit("event:message", message)
                 }
-                console.log(`Sending message to receiver ${receiverSocket}...`)
-                //sending the message to particular receiver
-                io.to(receiverSocket).emit("event:message", message)
+                else if (!receiverSocket) {
+                    console.log(`Receiver socket is undefined`)
+                }
+
                 // producing the message to kafka, for inserting in db
                 console.log(`Producing message to KAFKA...`)
                 await produceMessage({ message });

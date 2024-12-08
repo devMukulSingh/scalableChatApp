@@ -19,11 +19,17 @@ async function init() {
     app.use(cors({
         origin:'http://localhost:3000'
     }))
+
+    //@ts-ignore
+    app.post('/api/webhooks', bodyParser.raw({ type: 'application/json' }), webHookController)
+
+
+    app.use(bodyParser.json())
     app.use('/api/v1/auth',authRouter)
     app.use('/api/v1/chat',chatRouter)
-    //@ts-ignore
 
-    app.post('/api/webhooks', bodyParser.raw({ type: 'application/json' }), webHookController)
+    
+
     
     const server = http.createServer(app);
     const socketServer = new SocketService();

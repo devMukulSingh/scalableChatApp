@@ -20,7 +20,7 @@ const Avatar = ({ name, onClick }: Props) => {
             justify-center
             `}
     >
-      {name.toUpperCase()}
+      {name?.toUpperCase()}
     </div>
   );
 };

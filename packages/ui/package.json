@@ -10,6 +10,9 @@
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "react": "19.0.0-rc-66855b96-20241106"
+  },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
@@ -28,7 +31,6 @@
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "embla-carousel-react": "^8.5.1",
     "init": "^0.1.2",
     "lucide-react": "^0.462.0",
     "react": "19.0.0-rc-5c56b873-20241107",

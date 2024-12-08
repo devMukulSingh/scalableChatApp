@@ -1,13 +1,16 @@
 "use client";
-import { Input } from "@repo/ui/components/ui/input";
-import { Button } from "@repo/ui/components/ui/button";
-import { KeyboardEvent, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { KeyboardEvent, useEffect, useState } from "react";
 import { useSocket } from "../../../../context/SocketProvider";
 import { useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 type Props = {};
 
 const MessageInputBar = (props: Props) => {
+  const messagesPage = document.getElementById("messagesPage");
+  const { sendMessage, messages } = useSocket();
+
   const { receiverId } = useParams();
   const { userId: senderId } = useAuth();
   const onkeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -15,17 +18,30 @@ const MessageInputBar = (props: Props) => {
       handleOnSend();
     }
   };
-  const { sendMessage, messages } = useSocket();
+
   const [message, setMessage] = useState("");
 
   const handleOnSend = () => {
     if (!receiverId || !senderId) {
-      console.log(`Receiverid and senderId is required`);
-      return;
+      throw new Error("receiverId or senderId is undefined");
     }
-    sendMessage({  message, senderId, receiverId:receiverId.toString(),createdAt: new Date().toString(),id:"" });
+    sendMessage({
+      message,
+      senderId,
+      receiverId: receiverId.toString(),
+      createdAt: new Date().toString(),
+      id: "",
+    });
+
     setMessage("");
   };
+  useEffect(() => {
+    if (messagesPage)
+      messagesPage.scrollTo({
+        behavior: "smooth",
+        top: messagesPage?.scrollHeight,
+      });
+  }, [messages]);
   return (
     <div className="w-full flex mt-auto gap-5">
       <Input

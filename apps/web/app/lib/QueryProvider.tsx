@@ -8,12 +8,13 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
     new QueryClient({
       defaultOptions: {
         queries: {
-        
+       
           refetchOnWindowFocus: false,
           retry: false,
         },
         mutations: {
           retry: false,
+
           onError(e){
             toast.error(`Something went wrong `)
             console.log(`Error in mutation`,e);

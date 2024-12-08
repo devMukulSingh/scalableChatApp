@@ -11,16 +11,16 @@ type Props = {};
 
 const ContactsList = (props: Props) => {
   const { userId } = useAuth()
-  const { data } = useQuery<AxiosResponse<IUser[]>>({
+  const { data } = useQuery<IUser[]>({
     queryKey: [userId],
     queryFn: async () => {
       const data = await axios.get(`${base_url_server}/auth/get-all-users`);
-      return data;
+      return data.data;
     },
   });
   return (
     <div className="flex flex-col gap-5">
-      {data?.data.map((user, index) => (
+      {data?.map((user, index) => (
         <Link key={index} href={`/${user.id}`}>
           <SingleContact user={user} key={index} />
         </Link>

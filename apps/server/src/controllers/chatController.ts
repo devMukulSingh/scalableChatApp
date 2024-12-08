@@ -49,3 +49,64 @@ export async function getMessagesController(req: Request, res: Response): Promis
         })
     }
 }
+
+export async function editMessageController(req:Request,res:Response):Promise<any> {
+    try{
+        console.log(req.body)
+        const { message,id } = req.body;
+
+        if(!message) return res.status(400).json({
+            error:"Message is required"
+        })
+        if (!id) return res.status(400).json({
+            error: "messageId is required"
+        })
+
+        const editedMessage = await prisma.message.update({
+            where:{
+                id,
+            }  ,
+            data:{
+                message
+            }
+        })
+
+        return res.status(200).json({
+            message:"Message edited",
+        })
+    }
+    catch(e){
+        console.log("Error in editMessageController",e)
+        return res.status(500).json({
+            error:"Error in editMessageController",e
+        });
+
+    }
+}
+
+export async function deleteMessageController(req: Request, res: Response): Promise<any> {
+    try {
+        const { messageId } = req.body;
+
+        if (!messageId) return res.status(400).json({
+            error: "messageId is required"
+        })
+
+        const editedMessage = await prisma.message.delete({
+            where: {
+                id: messageId,
+            }
+        })
+
+        return res.status(200).json({
+            message: "Message edited",
+        })
+    }
+    catch (e) {
+        console.log("Error in deleteMessageController", e)
+        return res.status(500).json({
+            error: "Error in deleteMessageController", e
+        });
+
+    }
+}
